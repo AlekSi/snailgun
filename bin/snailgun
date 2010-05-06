@@ -4,7 +4,6 @@ $:.unshift File.expand_path(File.join(File.dirname(__FILE__), "..", "lib"))
 require 'snailgun'
 require 'optparse'
 
-sockpath = nil
 mode = nil
 envs = "test"
 rake = false
@@ -38,31 +37,16 @@ mode ||= if Snailgun::Rails.is_rails_app?
 STDERR.puts "Starting in #{mode} mode" if verbose
 case mode
 when :ruby
-  unless sockpath
-    dir = File.join(ENV['HOME'], '.snailgun')
-    begin
-      Dir.mkdir dir, 0700
-    rescue Errno::EEXIST
-      File.chmod 0700, dir
-    end
-    sockpath = File.join dir, $$.to_s
-  end
   fix_rake if rake
-  server = Snailgun::Server.new(sockpath)
+  server = Snailgun::Server.new(Snailgun::Sockets.socket_name)
   server.interactive!
 
 when :rails
-  sockdir = File.expand_path('tmp/sockets/snailgun')
-  begin
-    Dir.mkdir sockdir, 0700
-  rescue Errno::EEXIST
-    File.chmod 0700, sockdir
-  end
   pids = {}
   fix_rake   # TODO: separate process for rake (but then need to choose right RAILS_ENV)
   envs.split(/[\s,]+/).uniq.each do |env|
     pids[env] = fork do
-      server = Snailgun::Server.new("#{sockdir}/#{env}")
+      server = Snailgun::Server.new(Snailgun::Sockets.socket_name)
       Snailgun::Rails.load(env)
       STDERR.puts "Started server for #{env}" if verbose
       server.run

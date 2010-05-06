@@ -17,8 +17,8 @@ module Snailgun
   class Server
     attr_accessor :sockname
 
-    def initialize(sockname = nil)
-      @sockname = sockname || "/tmp/snailgun#{$$}"
+    def initialize(sockname)
+      @sockname = sockname
       File.delete(@sockname) rescue nil
       @socket = UNIXServer.open(@sockname)
       yield self if block_given?

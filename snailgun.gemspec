@@ -33,6 +33,7 @@ Gem::Specification.new do |s|
      "lib/snailgun.rb",
      "lib/snailgun/rails.rb",
      "lib/snailgun/server.rb",
+     "lib/snailgun/sockets.rb",
      "snailgun.gemspec"
   ]
   s.homepage = %q{http://github.com/candlerb/snailgun}

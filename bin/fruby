@@ -1,26 +1,13 @@
 #!/usr/bin/env ruby
 # Copyright (C) Brian Candler 2009. Released under the Ruby licence.
-# This could be rewritten in C for even faster startup
 
 require 'socket'
-if ENV['SNAILGUN_SOCK']
-  sockname = ENV['SNAILGUN_SOCK']
-elsif File.directory?('tmp/sockets/snailgun')
-  env = ENV['RAILS_ENV']
-  unless env
-    # Normally default to development: see railties/lib/tasks/misc.rake
-    env = $DEFAULT_ENV || 'development'
-    STDERR.puts "Snailgun assuming environment '#{env}'"
-  end
-  sockname = "tmp/sockets/snailgun/#{env}"
-end
+sockname = ENV['SNAILGUN_SOCK'] || "/tmp/snailgun" # sync with lib/snailgun/sockets.rb, we don't want require much there
 
 unless sockname
-  STDERR.puts <<EOS
-Unable to find path to snailgun socket.
-- did you run this in a session with a snailgun parent?
-- you can do 'SNAILGUN_SOCK=/path/to/sock #{$0} ...'
-EOS
+  STDERR.puts "Unable to find path to snailgun socket."
+  STDERR.puts "\t- did you run this in a session with a snailgun parent?"
+  STDERR.puts "\t- you can do 'SNAILGUN_SOCK=/path/to/sock #{$0} ...'"
   exit 1
 end
 
