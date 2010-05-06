@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # Copyright (C) Brian Candler 2009. Released under the Ruby licence.
 $:.unshift File.expand_path(File.join(File.dirname(__FILE__), "..", "lib"))
-require 'snailgun/server'
+require 'snailgun'
 require 'optparse'
 
 sockpath = nil
@@ -29,7 +29,7 @@ OptionParser.new do |opts|
   opts.on("-v", "--verbose", "show progress")	{ verbose = true }
 end.parse!
 
-mode ||= if File.exist?("config/boot.rb")
+mode ||= if Snailgun::Rails.is_rails_app?
            :rails
          else
            :ruby
@@ -52,10 +52,6 @@ when :ruby
   server.interactive!
 
 when :rails
-  conf = File.expand_path('config/boot.rb')
-  unless File.exist?(conf)
-    raise "#{conf} does not exist, cannot continue"
-  end
   sockdir = File.expand_path('tmp/sockets/snailgun')
   begin
     Dir.mkdir sockdir, 0700
@@ -67,25 +63,7 @@ when :rails
   envs.split(/[\s,]+/).uniq.each do |env|
     pids[env] = fork do
       server = Snailgun::Server.new("#{sockdir}/#{env}")
-      ENV['RAILS_ENV'] = env
-      load conf
-      require File.expand_path(RAILS_ROOT + '/config/environment')
-      # We can get some drastic test speedups by preloading test frameworks
-      # (although user could do that in config/environments/test.rb)
-      if env != 'test'
-        # do nothing
-      elsif File.exist?('test/test_helper.rb')
-        require 'test_help'
-      elsif File.exist?('spec/spec_helper.rb')
-        require 'spec'
-        require 'spec/rails'
-      end
-      if Rails.respond_to?(:configuration) && Rails.configuration.cache_classes
-        STDERR.puts <<EOS
-WARNING: Snailgun doesn't work well with `cache_classes`. Strongly recommend
-`config.cache_classes = false` in config/environments/#{env}.rb
-EOS
-      end
+      Snailgun::Rails.load(env)
       STDERR.puts "Started server for #{env}" if verbose
       server.run
     end

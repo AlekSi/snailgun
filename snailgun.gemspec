@@ -30,6 +30,8 @@ Gem::Specification.new do |s|
      "bin/frake",
      "bin/fruby",
      "bin/snailgun",
+     "lib/snailgun.rb",
+     "lib/snailgun/rails.rb",
      "lib/snailgun/server.rb",
      "snailgun.gemspec"
   ]
