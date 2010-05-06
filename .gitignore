@@ -1,6 +1,4 @@
-*~
-*.orig
 *.gem
-tmp
-doc/rdoc
-coverage
+.DS_Store
+.yardoc
+doc
