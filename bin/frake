@@ -9,8 +9,8 @@ ARGV.each do |arg|
   end
 end
 
-# Rails/Merb: make a guess at the correct environment
-if File.exist?("config/boot.rb") || File.exist?("config/init.rb")
+# Rails: make a guess at the correct environment
+if File.exist?("config/boot.rb")
   if ARGV.find { |arg| arg =~ /\bcucumber\b/ }
     $DEFAULT_ENV='cucumber'
   elsif ARGV.find { |arg| arg =~ /\b(test|spec)\b/ } || !ARGV.find { |arg| arg !~ /^-/ }

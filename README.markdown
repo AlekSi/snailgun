@@ -43,7 +43,7 @@ Case 1: standalone
 Case 2: Rails app
 -----------------
 
-When using Rails or Merb, snailgun will start a process preloaded for the
+When using Rails, snailgun will start a process preloaded for the
 `test` environment only unless told otherwise.
 
 You need to edit `config/environments/test.rb` and set
@@ -77,9 +77,6 @@ it.
 Note that any attempt by `fruby` or `frake` to perform an action in an
 environment other than 'test' will fail.  See below for how to run multiple
 snailgun environments.
-
-Merb support has been contributed (using MERB_ENV), but it is untested by
-me.
 
 Case 3: Rails with multiple environments
 ----------------------------------------

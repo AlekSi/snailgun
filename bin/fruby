@@ -6,7 +6,7 @@ require 'socket'
 if ENV['SNAILGUN_SOCK']
   sockname = ENV['SNAILGUN_SOCK']
 elsif File.directory?('tmp/sockets/snailgun')
-  env = ENV['RAILS_ENV'] || ENV['MERB_ENV']
+  env = ENV['RAILS_ENV']
   unless env
     # Normally default to development: see railties/lib/tasks/misc.rake
     env = $DEFAULT_ENV || 'development'
