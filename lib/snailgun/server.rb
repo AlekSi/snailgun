@@ -102,8 +102,20 @@ module Snailgun
         run
       }
       self.class.shell
-      Process.kill('TERM',pid)
-      # TODO: wait a few secs for it to die, 'KILL' if required
+
+      # TERM or KILL server
+      begin
+        Timeout.timeout(10) do
+          loop do
+            Process.kill('TERM', pid)
+            sleep 0.5
+          end
+        end
+      rescue Errno::ESRCH
+        # terminated, do nothing
+      rescue Timeout::Error
+        Process.kill('KILL', pid) rescue nil
+      end
       STDERR.puts "Snailgun ended"
     end
   end
