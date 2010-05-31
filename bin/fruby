@@ -4,7 +4,7 @@
 require 'socket'
 sockname = ENV['SNAILGUN_SOCK'] || "/tmp/snailgun" # sync with lib/snailgun/sockets.rb, we don't want require much there
 
-unless sockname
+if sockname.nil? || sockname.empty?
   STDERR.puts "Unable to find path to snailgun socket."
   STDERR.puts "\t- did you run this in a session with a snailgun parent?"
   STDERR.puts "\t- you can do 'SNAILGUN_SOCK=/path/to/sock #{$0} ...'"
@@ -16,8 +16,8 @@ server.send_io(STDIN)
 server.send_io(STDOUT)
 server.send_io(STDERR)
 args = Marshal.dump([ARGV, Dir.pwd, Process.getpgrp])
-server.write [args.size].pack("N")
-server.write args
+server.write([args.size].pack("N"))
+server.write(args)
 begin
   rc = (server.read(1) || "\000").unpack("C").first
   exit rc

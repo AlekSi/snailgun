@@ -86,11 +86,12 @@ module Snailgun
         load(cmd)
       end
     end
-    
+
+    # Starts shell.
     def self.shell
       shell_opts = ENV['SNAILGUN_SHELL_OPTS']
       args = shell_opts ? Shellwords.shellwords(shell_opts) : []
-      system(ENV['SHELL'] || 'bash', *args)
+      system(ENV['SHELL'] || '/bin/sh', *args)
     end
 
     # Interactive mode (start a subshell with SNAILGUN_SOCK set up,
